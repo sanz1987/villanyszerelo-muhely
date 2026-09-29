@@ -5537,7 +5537,7 @@ let diagramReady = false;
 (function(){
 'use strict';
 const V=window.VM,$=V.$,$$=V.$$,esc=V.esc,KEY='villanyszerelo-muhely-eszrevetelek-v1';
-const RELAY='https://villanyszerelo-eszrevetel.villanyszerelo-eszrevetel.workers.dev/';
+const RELAY=(location.protocol==='https:'||location.hostname==='127.0.0.1'||location.hostname==='localhost')?'https://villanyszerelo-eszrevetel.villanyszerelo-eszrevetel.workers.dev/':'';
 const OUTBOX='villanyszerelo-muhely-eszrevetel-kuldes-v1';
 const KINDS={hiba:'Tartalmi hiba',eliras:'Elírás',hianyzik:'Hiányzik',javaslat:'Javaslat',kerdes:'Kérdés'};
 const SEVS={sulyos:'Súlyos',kozepes:'Közepes',apro:'Apró'};
