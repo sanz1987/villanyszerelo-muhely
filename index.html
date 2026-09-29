@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Villanyszerelő Műhely</title>
+<style>
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    color: #23282e;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(900px 420px at 10% -10%, rgba(224,149,74,.20), transparent 55%),
+      radial-gradient(700px 380px at 110% 0%, rgba(77,151,204,.12), transparent 50%),
+      #f4f1ec;
+  }
+  form {
+    width: min(420px, 100%);
+    background: #fff;
+    border: 1px solid #ddd6cb;
+    border-radius: 18px;
+    padding: 28px 24px 22px;
+    box-shadow: 0 22px 48px -20px rgba(60,45,25,.32);
+  }
+  .mark {
+    width: 46px; height: 46px; border-radius: 14px;
+    display: grid; place-items: center;
+    background: linear-gradient(150deg, #c47a32, #a4571a);
+    color: #fff; font-weight: 800; letter-spacing: .04em;
+  }
+  h1 { font-size: 1.45rem; line-height: 1.2; margin: 14px 0 6px; }
+  p { margin: 0 0 16px; color: #59636e; }
+  label { display: block; font-size: .85rem; font-weight: 650; margin-bottom: 6px; }
+  input {
+    width: 100%; box-sizing: border-box;
+    border: 1px solid #c3b9a9; border-radius: 12px;
+    padding: 12px 12px; font: inherit; font-size: 1rem;
+    background: #fff;
+  }
+  input:focus { outline: 2.5px solid #a4571a; border-color: transparent; }
+  button {
+    margin-top: 14px; width: 100%;
+    border: 0; border-radius: 12px;
+    background: #a4571a; color: #fff;
+    font: inherit; font-weight: 700; font-size: 1rem;
+    padding: 12px 14px; cursor: pointer;
+  }
+  button:hover { background: #934d12; }
+  #hiba { min-height: 1.3em; margin: 10px 0 0; color: #c0342b; font-size: .9rem; }
+</style>
+</head>
+<body>
+<form id="kapu">
+  <div class="mark">VM</div>
+  <h1>Villanyszerelő Műhely</h1>
+  <p>A megtekintéshez írd be a jelszót.</p>
+  <label for="jelszo">Jelszó</label>
+  <input id="jelszo" name="jelszo" type="password" autocomplete="current-password" required autofocus>
+  <div id="hiba" role="alert"></div>
+  <button type="submit">Belépés</button>
+</form>
+<script>
+(function () {
+  var EXPECT = "b2593d3bc05d49572eca9945ebd2372b07b2c6408357fa276942f538e9bbd948";
+  var KEY = "villanyszerelo-muhely-kapu";
+  var form = document.getElementById("kapu");
+  var input = document.getElementById("jelszo");
+  var err = document.getElementById("hiba");
+  function fail(msg) { err.textContent = msg; input.select(); }
+  if (sessionStorage.getItem(KEY) === "nyitva") location.replace("muhely.html");
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (!crypto.subtle) { fail("Ezt a lapot biztonságos kapcsolaton (https) kell megnyitni."); return; }
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode(input.value)).then(function (buf) {
+      var hex = Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+      if (hex === EXPECT) {
+        input.value = "";
+        sessionStorage.setItem(KEY, "nyitva");
+        location.replace("muhely.html");
+      } else {
+        fail("Hibás jelszó.");
+      }
+    }).catch(function () { fail("A böngésző nem tudta ellenőrizni a jelszót."); });
+  });
+})();
+</script>
+</body>
+</html>
